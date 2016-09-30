@@ -21,7 +21,7 @@ object IndexedRDDLookup {
     val data = csv.map(line => line.split("\t").map(_.trim))
     val pairs = data.flatMap(row=> {
       var arr:List[Tuple2[String,String]] = List()
-      val tup = Tuple2(clientCleaning(row(1)),row(0))
+      val tup = Tuple2(CommonUtil.clientCleaning(row(1)),row(0))
       arr ::= tup
       
       arr
@@ -41,16 +41,10 @@ object IndexedRDDLookup {
     indexedkv
   }
   
-  def clientCleaning(s:String): String={
-    var st=s
-    st =st.replaceAll("[\\`\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\-\\+\\=\\-\\{\\}\\[\\]\\;\\:\\'\\\"\\<\\>\\,\\.\\/\\?]", "")
-    //println(s+"\t"+st)
-    st
-  }
-  
+
   def lookupFromText(text:String, indexedRdd: IndexedRDD[String, HashSet[String]]):HashMap[String,HashSet[String]]={
     var result = new HashMap[String,HashSet[String]]()
-    var tokens = clientCleaning(text).split(" ")
+    var tokens = CommonUtil.clientCleaning(text).split(" ")
     var len=tokens.length-1
     var windowLen=len
     if(windowLen>10)
